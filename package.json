@@ -9,6 +9,7 @@
     "test": "npm run lint && npm run build-test && ./node_modules/karma/bin/karma start",
     "build": "rm -rf lib/* && node_modules/.bin/babel src -d lib --stage=0 --loose -w",
     "dist": "browserify -t [babelify --stage=0 --loose] -o ./dist/tcomb-form.js -r .:tcomb-form -r react",
+    "dist-min": "webpack",
     "client": "watchify -t [babelify --stage=0 --loose] dev/client/client.js -o dev/client/bundle.js -v -x react",
     "start": "node dev/server/index.js"
   },
@@ -43,7 +44,8 @@
     "karma-firefox-launcher": "^0.1.4",
     "karma-tap": "^1.0.3",
     "react-vdom": "^0.4.0",
-    "tape": "^4.0.0"
+    "tape": "^4.0.0",
+    "webpack": "^1.11.0"
   },
   "tags": [
     "form",
