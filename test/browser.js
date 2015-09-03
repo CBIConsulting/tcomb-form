@@ -28,7 +28,7 @@ function _classCallCheck(instance, Constructor) {
 function _inherits(subClass, superClass) {
   if (typeof superClass !== 'function' && superClass !== null) {
     throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass);
-  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) subClass.__proto__ = superClass;
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
 var _react = require('react');
@@ -153,6 +153,21 @@ var decorators = {
 exports.decorators = decorators;
 
 var Component = (function (_React$Component) {
+  _inherits(Component, _React$Component);
+
+  _createClass(Component, null, [{
+    key: 'transformer',
+    value: {
+      format: function format(value) {
+        return Nil.is(value) ? null : value;
+      },
+      parse: function parse(value) {
+        return value;
+      }
+    },
+    enumerable: true
+  }]);
+
   function Component(props) {
     _classCallCheck(this, Component);
 
@@ -163,8 +178,6 @@ var Component = (function (_React$Component) {
       value: this.getTransformer().format(props.value)
     };
   }
-
-  _inherits(Component, _React$Component);
 
   Component.prototype.getTransformer = function getTransformer() {
     return this.props.options.transformer || this.constructor.transformer;
@@ -209,7 +222,7 @@ var Component = (function (_React$Component) {
   Component.prototype.getDefaultLabel = function getDefaultLabel() {
     var ctx = this.props.ctx;
     if (ctx.label) {
-      return ctx.label + (this.typeInfo.isMaybe ? this.getI18n().optional : '');
+      return ctx.label + (this.typeInfo.isMaybe ? this.getI18n().optional : this.getI18n().required);
     }
   };
 
@@ -277,19 +290,6 @@ var Component = (function (_React$Component) {
     return _uvdomReact.compile(template(locals));
   };
 
-  _createClass(Component, null, [{
-    key: 'transformer',
-    value: {
-      format: function format(value) {
-        return Nil.is(value) ? null : value;
-      },
-      parse: function parse(value) {
-        return value;
-      }
-    },
-    enumerable: true
-  }]);
-
   return Component;
 })(_react2['default'].Component);
 
@@ -306,22 +306,20 @@ function parseNumber(value) {
 }
 
 var Textbox = (function (_Component) {
+  _inherits(Textbox, _Component);
+
   function Textbox() {
     _classCallCheck(this, _Textbox);
 
     _Component.apply(this, arguments);
   }
 
-  _inherits(Textbox, _Component);
-
-  var _Textbox = Textbox;
-
-  _Textbox.prototype.getTransformer = function getTransformer() {
+  Textbox.prototype.getTransformer = function getTransformer() {
     var options = this.props.options;
     return options.transformer ? options.transformer : this.typeInfo.innerType === _tcombValidation2['default'].Num ? Textbox.numberTransformer : Textbox.transformer;
   };
 
-  _Textbox.prototype.getLocals = function getLocals() {
+  Textbox.prototype.getLocals = function getLocals() {
     var locals = _Component.prototype.getLocals.call(this);
     locals.attrs = this.getAttrs();
     locals.attrs.placeholder = this.getPlaceholder();
@@ -329,7 +327,7 @@ var Textbox = (function (_Component) {
     return locals;
   };
 
-  _createClass(_Textbox, null, [{
+  _createClass(Textbox, null, [{
     key: 'transformer',
     value: {
       format: function format(value) {
@@ -349,6 +347,7 @@ var Textbox = (function (_Component) {
     enumerable: true
   }]);
 
+  var _Textbox = Textbox;
   Textbox = decorators.template('textbox')(Textbox) || Textbox;
   Textbox = decorators.placeholder(Textbox) || Textbox;
   Textbox = decorators.attrs(Textbox) || Textbox;
@@ -358,17 +357,15 @@ var Textbox = (function (_Component) {
 exports.Textbox = Textbox;
 
 var Checkbox = (function (_Component2) {
+  _inherits(Checkbox, _Component2);
+
   function Checkbox() {
     _classCallCheck(this, _Checkbox);
 
     _Component2.apply(this, arguments);
   }
 
-  _inherits(Checkbox, _Component2);
-
-  var _Checkbox = Checkbox;
-
-  _Checkbox.prototype.getLocals = function getLocals() {
+  Checkbox.prototype.getLocals = function getLocals() {
     var locals = _Component2.prototype.getLocals.call(this);
     locals.attrs = this.getAttrs();
     // checkboxes must always have a label
@@ -376,7 +373,7 @@ var Checkbox = (function (_Component2) {
     return locals;
   };
 
-  _createClass(_Checkbox, null, [{
+  _createClass(Checkbox, null, [{
     key: 'transformer',
     value: {
       format: function format(value) {
@@ -389,6 +386,7 @@ var Checkbox = (function (_Component2) {
     enumerable: true
   }]);
 
+  var _Checkbox = Checkbox;
   Checkbox = decorators.template('checkbox')(Checkbox) || Checkbox;
   Checkbox = decorators.attrs(Checkbox) || Checkbox;
   return Checkbox;
@@ -397,17 +395,15 @@ var Checkbox = (function (_Component2) {
 exports.Checkbox = Checkbox;
 
 var Select = (function (_Component3) {
+  _inherits(Select, _Component3);
+
   function Select() {
     _classCallCheck(this, _Select);
 
     _Component3.apply(this, arguments);
   }
 
-  _inherits(Select, _Component3);
-
-  var _Select = Select;
-
-  _Select.prototype.getTransformer = function getTransformer() {
+  Select.prototype.getTransformer = function getTransformer() {
     var options = this.props.options;
     if (options.transformer) {
       return options.transformer;
@@ -418,19 +414,19 @@ var Select = (function (_Component3) {
     return Select.transformer(this.getNullOption());
   };
 
-  _Select.prototype.getNullOption = function getNullOption() {
+  Select.prototype.getNullOption = function getNullOption() {
     return this.props.options.nullOption || { value: '', text: '-' };
   };
 
-  _Select.prototype.isMultiple = function isMultiple() {
+  Select.prototype.isMultiple = function isMultiple() {
     return this.typeInfo.innerType.meta.kind === 'list';
   };
 
-  _Select.prototype.getEnum = function getEnum() {
+  Select.prototype.getEnum = function getEnum() {
     return this.isMultiple() ? _util.getTypeInfo(this.typeInfo.innerType.meta.type).innerType : this.typeInfo.innerType;
   };
 
-  _Select.prototype.getOptions = function getOptions() {
+  Select.prototype.getOptions = function getOptions() {
     var options = this.props.options;
     var items = options.options ? options.options.slice() : _util.getOptionsOfEnum(this.getEnum());
     if (options.order) {
@@ -443,7 +439,7 @@ var Select = (function (_Component3) {
     return items;
   };
 
-  _Select.prototype.getLocals = function getLocals() {
+  Select.prototype.getLocals = function getLocals() {
     var locals = _Component3.prototype.getLocals.call(this);
     locals.attrs = this.getAttrs();
     locals.options = this.getOptions();
@@ -451,7 +447,7 @@ var Select = (function (_Component3) {
     return locals;
   };
 
-  _createClass(_Select, null, [{
+  _createClass(Select, null, [{
     key: 'transformer',
     value: function value(nullOption) {
       return {
@@ -477,6 +473,7 @@ var Select = (function (_Component3) {
     enumerable: true
   }]);
 
+  var _Select = Select;
   Select = decorators.template('select')(Select) || Select;
   Select = decorators.attrs(Select) || Select;
   return Select;
@@ -485,17 +482,15 @@ var Select = (function (_Component3) {
 exports.Select = Select;
 
 var Radio = (function (_Component4) {
+  _inherits(Radio, _Component4);
+
   function Radio() {
     _classCallCheck(this, _Radio);
 
     _Component4.apply(this, arguments);
   }
 
-  _inherits(Radio, _Component4);
-
-  var _Radio = Radio;
-
-  _Radio.prototype.getOptions = function getOptions() {
+  Radio.prototype.getOptions = function getOptions() {
     var options = this.props.options;
     var items = options.options ? options.options.slice() : _util.getOptionsOfEnum(this.typeInfo.innerType);
     if (options.order) {
@@ -504,13 +499,14 @@ var Radio = (function (_Component4) {
     return items;
   };
 
-  _Radio.prototype.getLocals = function getLocals() {
+  Radio.prototype.getLocals = function getLocals() {
     var locals = _Component4.prototype.getLocals.call(this);
     locals.attrs = this.getAttrs();
     locals.options = this.getOptions();
     return locals;
   };
 
+  var _Radio = Radio;
   Radio = decorators.template('radio')(Radio) || Radio;
   Radio = decorators.attrs(Radio) || Radio;
   return Radio;
@@ -519,28 +515,26 @@ var Radio = (function (_Component4) {
 exports.Radio = Radio;
 
 var Datetime = (function (_Component5) {
+  _inherits(Datetime, _Component5);
+
   function Datetime() {
     _classCallCheck(this, _Datetime);
 
     _Component5.apply(this, arguments);
   }
 
-  _inherits(Datetime, _Component5);
-
-  var _Datetime = Datetime;
-
-  _Datetime.prototype.getOrder = function getOrder() {
+  Datetime.prototype.getOrder = function getOrder() {
     return this.props.options.order || ['M', 'D', 'YY'];
   };
 
-  _Datetime.prototype.getLocals = function getLocals() {
+  Datetime.prototype.getLocals = function getLocals() {
     var locals = _Component5.prototype.getLocals.call(this);
     locals.attrs = this.getAttrs();
     locals.order = this.getOrder();
     return locals;
   };
 
-  _createClass(_Datetime, null, [{
+  _createClass(Datetime, null, [{
     key: 'transformer',
     value: {
       format: function format(value) {
@@ -554,6 +548,7 @@ var Datetime = (function (_Component5) {
     enumerable: true
   }]);
 
+  var _Datetime = Datetime;
   Datetime = decorators.template('date')(Datetime) || Datetime;
   Datetime = decorators.attrs(Datetime) || Datetime;
   return Datetime;
@@ -562,17 +557,15 @@ var Datetime = (function (_Component5) {
 exports.Datetime = Datetime;
 
 var Struct = (function (_Component6) {
+  _inherits(Struct, _Component6);
+
   function Struct() {
     _classCallCheck(this, _Struct);
 
     _Component6.apply(this, arguments);
   }
 
-  _inherits(Struct, _Component6);
-
-  var _Struct = Struct;
-
-  _Struct.prototype.validate = function validate() {
+  Struct.prototype.validate = function validate() {
     var value = {};
     var errors = [];
     var hasError = false;
@@ -600,26 +593,26 @@ var Struct = (function (_Component6) {
     return new _tcombValidation2['default'].ValidationResult({ errors: errors, value: value });
   };
 
-  _Struct.prototype.onChange = function onChange(fieldName, fieldValue, path, kind) {
+  Struct.prototype.onChange = function onChange(fieldName, fieldValue, path, kind) {
     var value = _tcombValidation2['default'].mixin({}, this.state.value);
     value[fieldName] = fieldValue;
     this.state.value = value;
     this.props.onChange(value, path, kind);
   };
 
-  _Struct.prototype.getTemplate = function getTemplate() {
+  Struct.prototype.getTemplate = function getTemplate() {
     return this.props.options.template || this.getTemplates().struct;
   };
 
-  _Struct.prototype.getTypeProps = function getTypeProps() {
+  Struct.prototype.getTypeProps = function getTypeProps() {
     return this.typeInfo.innerType.meta.props;
   };
 
-  _Struct.prototype.getOrder = function getOrder() {
+  Struct.prototype.getOrder = function getOrder() {
     return this.props.options.order || Object.keys(this.getTypeProps());
   };
 
-  _Struct.prototype.getInputs = function getInputs() {
+  Struct.prototype.getInputs = function getInputs() {
     var _props = this.props;
     var options = _props.options;
     var ctx = _props.ctx;
@@ -659,7 +652,7 @@ var Struct = (function (_Component6) {
     return inputs;
   };
 
-  _Struct.prototype.getLocals = function getLocals() {
+  Struct.prototype.getLocals = function getLocals() {
     var options = this.props.options;
     var locals = _Component6.prototype.getLocals.call(this);
     locals.order = this.getOrder();
@@ -667,7 +660,7 @@ var Struct = (function (_Component6) {
     return locals;
   };
 
-  _createClass(_Struct, null, [{
+  _createClass(Struct, null, [{
     key: 'transformer',
     value: {
       format: function format(value) {
@@ -680,6 +673,7 @@ var Struct = (function (_Component6) {
     enumerable: true
   }]);
 
+  var _Struct = Struct;
   Struct = decorators.templates(Struct) || Struct;
   return Struct;
 })(Component);
@@ -698,6 +692,21 @@ function toSameLength(value, keys, uidGenerator) {
 }
 
 var List = (function (_Component7) {
+  _inherits(List, _Component7);
+
+  _createClass(List, null, [{
+    key: 'transformer',
+    value: {
+      format: function format(value) {
+        return Nil.is(value) ? noarr : value;
+      },
+      parse: function parse(value) {
+        return value;
+      }
+    },
+    enumerable: true
+  }]);
+
   function List(props) {
     _classCallCheck(this, _List);
 
@@ -707,11 +716,7 @@ var List = (function (_Component7) {
     });
   }
 
-  _inherits(List, _Component7);
-
-  var _List = List;
-
-  _List.prototype.componentWillReceiveProps = function componentWillReceiveProps(props) {
+  List.prototype.componentWillReceiveProps = function componentWillReceiveProps(props) {
     if (props.type !== this.props.type) {
       this.typeInfo = _util.getTypeInfo(props.type);
     }
@@ -722,7 +727,7 @@ var List = (function (_Component7) {
     });
   };
 
-  _List.prototype.validate = function validate() {
+  List.prototype.validate = function validate() {
     var value = [];
     var errors = [];
     var hasError = false;
@@ -745,7 +750,7 @@ var List = (function (_Component7) {
     return new _tcombValidation2['default'].ValidationResult({ errors: errors, value: value });
   };
 
-  _List.prototype.onChange = function onChange(value, keys, path, kind) {
+  List.prototype.onChange = function onChange(value, keys, path, kind) {
     var _this2 = this;
 
     keys = toSameLength(value, keys, this.props.ctx.uidGenerator);
@@ -761,20 +766,20 @@ var List = (function (_Component7) {
     }
   };
 
-  _List.prototype.addItem = function addItem(evt) {
+  List.prototype.addItem = function addItem(evt) {
     evt.preventDefault();
     var value = this.state.value.concat(undefined);
     var keys = this.state.keys.concat(this.props.ctx.uidGenerator.next());
     this.onChange(value, keys, this.props.ctx.path.concat(value.length - 1), 'add');
   };
 
-  _List.prototype.onItemChange = function onItemChange(itemIndex, itemValue, path) {
+  List.prototype.onItemChange = function onItemChange(itemIndex, itemValue, path) {
     var value = this.state.value.slice();
     value[itemIndex] = itemValue;
     this.onChange(value, this.state.keys, path);
   };
 
-  _List.prototype.removeItem = function removeItem(i, evt) {
+  List.prototype.removeItem = function removeItem(i, evt) {
     evt.preventDefault();
     var value = this.state.value.slice();
     value.splice(i, 1);
@@ -783,25 +788,25 @@ var List = (function (_Component7) {
     this.onChange(value, keys, this.props.ctx.path.concat(i), 'remove');
   };
 
-  _List.prototype.moveUpItem = function moveUpItem(i, evt) {
+  List.prototype.moveUpItem = function moveUpItem(i, evt) {
     evt.preventDefault();
     if (i > 0) {
       this.onChange(_util.move(this.state.value.slice(), i, i - 1), _util.move(this.state.keys.slice(), i, i - 1), this.props.ctx.path.concat(i), 'moveUp');
     }
   };
 
-  _List.prototype.moveDownItem = function moveDownItem(i, evt) {
+  List.prototype.moveDownItem = function moveDownItem(i, evt) {
     evt.preventDefault();
     if (i < this.state.value.length - 1) {
       this.onChange(_util.move(this.state.value.slice(), i, i + 1), _util.move(this.state.keys.slice(), i, i + 1), this.props.ctx.path.concat(i), 'moveDown');
     }
   };
 
-  _List.prototype.getTemplate = function getTemplate() {
+  List.prototype.getTemplate = function getTemplate() {
     return this.props.options.template || this.getTemplates().list;
   };
 
-  _List.prototype.getItems = function getItems() {
+  List.prototype.getItems = function getItems() {
     var _this3 = this;
 
     var _props2 = this.props;
@@ -849,7 +854,7 @@ var List = (function (_Component7) {
     });
   };
 
-  _List.prototype.getLocals = function getLocals() {
+  List.prototype.getLocals = function getLocals() {
     var options = this.props.options;
     var i18n = this.getI18n();
     var locals = _Component7.prototype.getLocals.call(this);
@@ -861,19 +866,7 @@ var List = (function (_Component7) {
     return locals;
   };
 
-  _createClass(_List, null, [{
-    key: 'transformer',
-    value: {
-      format: function format(value) {
-        return Nil.is(value) ? noarr : value;
-      },
-      parse: function parse(value) {
-        return value;
-      }
-    },
-    enumerable: true
-  }]);
-
+  var _List = List;
   List = decorators.templates(List) || List;
   return List;
 })(Component);
@@ -881,13 +874,13 @@ var List = (function (_Component7) {
 exports.List = List;
 
 var Form = (function (_React$Component2) {
+  _inherits(Form, _React$Component2);
+
   function Form() {
     _classCallCheck(this, Form);
 
     _React$Component2.apply(this, arguments);
   }
-
-  _inherits(Form, _React$Component2);
 
   Form.prototype.validate = function validate() {
     return this.refs.input.validate();
@@ -1747,35 +1740,31 @@ var rootParent = {}
  * Browsers that support typed arrays are IE 10+, Firefox 4+, Chrome 7+, Safari 5.1+,
  * Opera 11.6+, iOS 4.2+.
  *
- * Due to various browser bugs, sometimes the Object implementation will be used even
- * when the browser supports typed arrays.
- *
  * Note:
  *
- *   - Firefox 4-29 lacks support for adding new properties to `Uint8Array` instances,
- *     See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
+ * - Implementation must support adding new properties to `Uint8Array` instances.
+ *   Firefox 4-29 lacked support, fixed in Firefox 30+.
+ *   See: https://bugzilla.mozilla.org/show_bug.cgi?id=695438.
  *
- *   - Safari 5-7 lacks support for changing the `Object.prototype.constructor` property
- *     on objects.
+ *  - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
  *
- *   - Chrome 9-10 is missing the `TypedArray.prototype.subarray` function.
+ *  - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
+ *    incorrect length in some situations.
  *
- *   - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
- *     incorrect length in some situations.
-
- * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
- * get the Object implementation, which is slower but behaves correctly.
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they will
+ * get the Object implementation, which is slower but will work correctly.
  */
 Buffer.TYPED_ARRAY_SUPPORT = (function () {
-  function Bar () {}
+  function Foo () {}
   try {
-    var arr = new Uint8Array(1)
+    var buf = new ArrayBuffer(0)
+    var arr = new Uint8Array(buf)
     arr.foo = function () { return 42 }
-    arr.constructor = Bar
+    arr.constructor = Foo
     return arr.foo() === 42 && // typed array instances can be augmented
-        arr.constructor === Bar && // constructor can be set
+        arr.constructor === Foo && // constructor can be set
         typeof arr.subarray === 'function' && // chrome 9-10 lack `subarray`
-        arr.subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
+        new Uint8Array(1).subarray(1, 1).byteLength === 0 // ie10 has broken `subarray`
   } catch (e) {
     return false
   }
@@ -1853,13 +1842,8 @@ function fromObject (that, object) {
     throw new TypeError('must start with number, buffer, array or string')
   }
 
-  if (typeof ArrayBuffer !== 'undefined') {
-    if (object.buffer instanceof ArrayBuffer) {
-      return fromTypedArray(that, object)
-    }
-    if (object instanceof ArrayBuffer) {
-      return fromArrayBuffer(that, object)
-    }
+  if (typeof ArrayBuffer !== 'undefined' && object.buffer instanceof ArrayBuffer) {
+    return fromTypedArray(that, object)
   }
 
   if (object.length) return fromArrayLike(that, object)
@@ -1892,18 +1876,6 @@ function fromTypedArray (that, array) {
   // of the old Buffer constructor.
   for (var i = 0; i < length; i += 1) {
     that[i] = array[i] & 255
-  }
-  return that
-}
-
-function fromArrayBuffer (that, array) {
-  if (Buffer.TYPED_ARRAY_SUPPORT) {
-    // Return an augmented `Uint8Array` instance, for best performance
-    array.byteLength
-    that = Buffer._augment(new Uint8Array(array))
-  } else {
-    // Fallback: Return an object instance of the Buffer class
-    that = fromTypedArray(that, new Uint8Array(array))
   }
   return that
 }
@@ -2025,6 +1997,8 @@ Buffer.concat = function concat (list, length) {
 
   if (list.length === 0) {
     return new Buffer(0)
+  } else if (list.length === 1) {
+    return list[0]
   }
 
   var i
@@ -2199,13 +2173,13 @@ Buffer.prototype.indexOf = function indexOf (val, byteOffset) {
   throw new TypeError('val must be string, number or Buffer')
 }
 
-// `get` is deprecated
+// `get` will be removed in Node 0.13+
 Buffer.prototype.get = function get (offset) {
   console.log('.get() is deprecated. Access using array indexes instead.')
   return this.readUInt8(offset)
 }
 
-// `set` is deprecated
+// `set` will be removed in Node 0.13+
 Buffer.prototype.set = function set (v, offset) {
   console.log('.set() is deprecated. Access using array indexes instead.')
   return this.writeUInt8(v, offset)
@@ -2894,16 +2868,9 @@ Buffer.prototype.copy = function copy (target, targetStart, start, end) {
   }
 
   var len = end - start
-  var i
 
-  if (this === target && start < targetStart && targetStart < end) {
-    // descending copy from end
-    for (i = len - 1; i >= 0; i--) {
-      target[i + targetStart] = this[i + start]
-    }
-  } else if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
-    // ascending copy from start
-    for (i = 0; i < len; i++) {
+  if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < len; i++) {
       target[i + targetStart] = this[i + start]
     }
   } else {
@@ -2979,7 +2946,7 @@ Buffer._augment = function _augment (arr) {
   // save reference to original Uint8Array set method before overwriting
   arr._set = arr.set
 
-  // deprecated
+  // deprecated, will be removed in node 0.13+
   arr.get = BP.get
   arr.set = BP.set
 
@@ -3035,7 +3002,7 @@ Buffer._augment = function _augment (arr) {
   return arr
 }
 
-var INVALID_BASE64_RE = /[^+\/0-9A-Za-z-_]/g
+var INVALID_BASE64_RE = /[^+\/0-9A-z\-]/g
 
 function base64clean (str) {
   // Node strips out invalid characters like \n and \t from the string, base64-js does not
@@ -26782,7 +26749,7 @@ function createHarness (conf_) {
                 inspectCode(st_);
             });
             st.on('result', function (r) {
-                if (!r.ok && typeof r !== 'string') test._exitCode = 1
+                if (!r.ok) test._exitCode = 1
             });
         })(t);
         
@@ -27527,9 +27494,8 @@ Test.prototype.doesNotThrow = function (fn, expected, msg, extra) {
     });
 };
 
-var hasOwn = Object.prototype.hasOwnProperty;
 function has (obj, prop) {
-    return hasOwn.call(obj, prop);
+    return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
 Test.skip = function (name_, _opts, _cb) {
@@ -27784,9 +27750,9 @@ function isRegExp (obj) { return toStr(obj) === '[object RegExp]' }
 function isError (obj) { return toStr(obj) === '[object Error]' }
 function isSymbol (obj) { return toStr(obj) === '[object Symbol]' }
 
-var hasOwn = Object.prototype.hasOwnProperty || function (key) { return key in this; };
 function has (obj, key) {
-    return hasOwn.call(obj, key);
+    if (!{}.hasOwnProperty) return key in obj;
+    return {}.hasOwnProperty.call(obj, key);
 }
 
 function toStr (obj) {
@@ -30759,13 +30725,21 @@ tape('Textbox', function (tape) {
   });
 
   tape.test('label', function (tape) {
-    tape.plan(4);
+    tape.plan(5);
 
     tape.strictEqual(new Textbox({
       type: t.Str,
       options: {},
       ctx: ctx
     }).getLocals().label, 'Default label', 'should have a default label');
+
+    ctx.i18n.required = ' (required)';
+    tape.strictEqual(new Textbox({
+      type: t.Str,
+      options: {},
+      ctx: ctx
+    }).getLocals().label, 'Default label (required)', 'should have a default label');
+    ctx.i18n.required = '';
 
     tape.strictEqual(new Textbox({
       type: t.Str,
@@ -31095,6 +31069,7 @@ var ctx = {
   label: 'Default label',
   i18n: {
     optional: ' (optional)',
+    required: '',
     add: 'Add',
     remove: 'Remove',
     up: 'Up',
