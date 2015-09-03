@@ -9,7 +9,8 @@ module.exports = {
 		filename: "tcomb-form.min.js"
 	},
 	externals: {
-		'react': 'React'
+		'react': 'React',
+		'react/addons': 'React'
 	},
 	plugins: [
 		new webpack.optimize.UglifyJsPlugin(),
